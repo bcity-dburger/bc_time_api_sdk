@@ -26,7 +26,7 @@ $ python pip install -e .
 After installing bc_time
 
 Next, set up credentials at:\
-~/.bc_time/credentials
+$HOME/.bc_time/credentials
 
 ~~~
 [default]
