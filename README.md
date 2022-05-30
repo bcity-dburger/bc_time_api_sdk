@@ -61,7 +61,7 @@ Please note that group objects also has access the the methods as defined for Ob
 
 * add_visitor_to_group
 * remove_visitor_from_group
-* get_all_members_pagination
+* get_all_members_using_pagination
 
 All methods will return a Dictionary that - depending on the response - may contain the following keys:
 * status
