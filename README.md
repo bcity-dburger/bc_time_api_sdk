@@ -23,9 +23,7 @@ $ python pip install -e .
 ~~~
 
 # Using bc_time
-After installing bc_time
-
-Next, set up credentials at:\
+After you've installed bc_time, the next step is to set-up your credentials at:\
 $HOME/.bc_time/credentials
 
 ~~~
@@ -33,6 +31,7 @@ $HOME/.bc_time/credentials
 client_id = YOUR_CLIENT_ID
 client_secret = YOUR_CLIENT_SECRET
 crypt_key = YOUR_CRYPT_KEY
+grant_type = YOUR_GRANT_TYPE
 ~~~
 
 Then, from a Python interpreter:
@@ -40,6 +39,22 @@ Then, from a Python interpreter:
 >>> import bc_time
 >>> visitors = bc_time.Visitors()
 >>> response_data = visitors.get_all_using_pagination(filters={'filter_status' : bc_time.Status.active})
+>>> if response_data['status'] == bc_time.RequestStatus.success:
+                for visitor in response_data['data']:
+                        print(visitor)
+~~~
+
+You also have the option to specify your credentials via the constructor of the Api class:
+~~~
+>>> import bc_time
+>>> api = bc_time.Api(
+                client_id='YOUR_CLIENT_ID',
+                client_secret='YOUR_CLIENT_SECRET',
+                crypt_key='YOUR_CRYPT_KEY',
+                grant_type='YOUR_GRANT_TYPE' # Consider using the bc_time.GrantType constants, for example bc_time.GrantType.CLIENT_CREDENTIALS
+        )
+>>> visitors = bc_time.Visitors(api)
+>>> response_data = visitors.get_all_using_pagination()
 >>> if response_data['status'] == bc_time.RequestStatus.success:
                 for visitor in response_data['data']:
                         print(visitor)

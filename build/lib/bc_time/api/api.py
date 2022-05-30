@@ -39,8 +39,14 @@ class Api(RequestsBase):
             )
         return self.__token
 
-    def __init__(self, grant_type: str=None, code: str=None) -> None:
+    def __init__(self, client_id: str=None, client_secret: str=None, crypt_key: str=None, grant_type: str=None, code: str=None) -> None:
         self.__init_authentication_credentials_from_file()
+        if client_id:
+            self.client_id = client_id
+        if client_secret:
+            self.client_secret = client_secret
+        if crypt_key:
+            self.crypt_key = crypt_key
         if grant_type:
             self.grant_type = grant_type
         if code:
