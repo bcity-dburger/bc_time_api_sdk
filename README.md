@@ -39,9 +39,9 @@ Then, from a Python interpreter:
 ~~~
 >>> import bc_time
 >>> visitors = bc_time.Visitors()
->>> data_response = visitors.get_all_using_pagination()
->>> if data_response['status'] == bc_time.RequestStatus.success:
-                for visitor in data_response['data']:
+>>> response_data = visitors.get_all_using_pagination()
+>>> if response_data['status'] == bc_time.RequestStatus.success:
+                for visitor in response_data['data']:
                         print(visitor)
 ~~~
 
