@@ -16,10 +16,10 @@ Then, you can install bc_time from PyPI with:
 $ python pip install bc_time
 or install from source with:
 ~~~
-$ git clone git@bitbucket.org:dburger/bc_time_api.git
-$ cd bc_time_api
+$ git clone git@bitbucket.org:dburger/bc_time_api_sdk.git
+$ cd bc_time_api_sdk
 $ python pip install -r requirements.txt
-$ python -m pip install -e .
+$ python pip install -e .
 ~~~
 
 # Using bc_time
@@ -40,8 +40,9 @@ Then, from a Python interpreter:
 >>> import bc_time
 >>> visitors = bc_time.Visitors()
 >>> data_response = visitors.get_all_using_pagination()
->>> for visitor in data_response['data']:
-        print(visitor)
+>>> if data_response['status'] == bc_time.RequestStatus.success:
+                for visitor in data_response['data']:
+                        print(visitor)
 ~~~
 
 # Documentation
