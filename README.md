@@ -5,7 +5,7 @@ bc_time is the Binary City (BC) Time Application Programming Interface (API) Sof
 
 bc_time is maintained and published by [Binary City](https://bcity.me).
 
-# Getting Started
+# Getting started
 Assuming that you have a supported version of Python installed, you can first set up your environment with:
 
 $ python venv .venv
@@ -44,6 +44,31 @@ Then, from a Python interpreter:
                 for visitor in data_response['data']:
                         print(visitor)
 ~~~
+
+# Available methods
+
+## For objects
+* create
+* create_many
+* update
+* update_many
+* get_all_using_pagination
+* get_one
+* get_many
+
+## For membership/group objects
+Please note that group objects also has access the the methods as defined for Objects.
+
+* add_visitor_to_group
+* remove_visitor_from_group
+* get_all_members_pagination
+
+All methods will return a Dictionary that - depending on the response - may contain the following keys:
+* status
+* data
+
+Status IDs can be referenced using the enumerator bc_time.RequestStatus.
+
 
 # Documentation
 
