@@ -43,6 +43,7 @@ Then, from a Python interpreter:
 >>> if data_response['status'] == bc_time.RequestStatus.success:
                 for visitor in data_response['data']:
                         print(visitor)
+
 ~~~
 
 # Documentation
