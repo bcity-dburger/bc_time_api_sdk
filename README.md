@@ -38,7 +38,7 @@ Then, from a Python interpreter:
 ~~~
 >>> import bc_time
 >>> visitors = bc_time.Visitors()
->>> response_data = visitors.get_all_using_pagination(filters={'filter_status' : bc_time.Status.active})
+>>> response_data = visitors.get_all_using_pagination(filters={'filter_status': bc_time.Status.active})
 >>> if response_data['status'] == bc_time.RequestStatus.success:
                 for visitor in response_data['data']:
                         print(visitor)
