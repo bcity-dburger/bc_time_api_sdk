@@ -101,7 +101,7 @@ class Api(RequestsBase):
         return self._get_response_data(post_response.text) if post_response.status_code == requests_status_codes.ok else None
 
     def __get_create_or_update_data(self, content_type_id: ContentType, payload: dict, content_uid: int=None) -> dict:
-        data = {'content_type_id' : int(content_type_id)}
+        data = {'content_type_id': int(content_type_id)}
         if content_uid: # Will be omitted if performing POST (1 new object).
             data['content_uid'] = content_uid
         if payload:
@@ -109,7 +109,7 @@ class Api(RequestsBase):
                 data.update(payload)
             else:
                 data['data'] = payload
-        create_or_update_payload = {'access_token' : self.token.token}
+        create_or_update_payload = {'access_token': self.token.token}
         if self.crypt_key:
             self.crypt.data = json_dumps(data)
             create_or_update_payload['data'] = self.crypt.encrypt()
@@ -155,15 +155,15 @@ class Api(RequestsBase):
 
     def __get_request_params(self, content_type_id: ContentType, content_uids: list=None, filters: dict=None, page: int=None, row_count: int=None) -> dict:
         data = {
-            'content_type_id' : int(content_type_id),
-            'content_uid' : content_uids[0] if len(content_uids) == 1 else ','.join([str(content_uid) for content_uid in content_uids]),
+            'content_type_id': int(content_type_id),
+            'content_uid': content_uids[0] if len(content_uids) == 1 else ','.join([str(content_uid) for content_uid in content_uids]),
         }
         if self.__can_paginate(page, row_count):
             data['page'] = page
             data['row_count'] = row_count
         if filters:
             data.update(filters)
-        request_params = {'access_token' : self.token.token}
+        request_params = {'access_token': self.token.token}
         if self.crypt_key:
             self.crypt.data = json_dumps(data)
             request_params['data'] = self.crypt.encrypt()

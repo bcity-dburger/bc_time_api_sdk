@@ -5,10 +5,12 @@ from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives import padding
 
 class Crypt:
+    # Contants
     IV_START_VALUES = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'] # a = 1, b = 2..., A = 9, B = 10..., and etc.
     KEY_LENGTH = 32 # Not used in this class (only in BC Time), but leaving it here for information sake.
     IV_LENGTH = 16
 
+    # Public
     key = None
     data = None
 
@@ -36,7 +38,7 @@ class Crypt:
         if not self.__validate_data():
             return None
         iv, encrypted_data = self.__extract_iv()
-        if not iv or not encrypted_data:
+        if iv is None or encrypted_data is None:
             return None
         encrypted_data = base64_decode(encrypted_data)
         key = str.encode(self.key)
@@ -58,7 +60,7 @@ class Crypt:
 
     def __extract_iv(self) -> tuple[str, str]:
         iv_start_length, encrypted_data = self.__extract_iv_start_length()
-        if not iv_start_length or not encrypted_data:
+        if iv_start_length is None or encrypted_data is None:
             return None, None
         iv_end_length = self.IV_LENGTH - iv_start_length
         encrypted_data, equal_signs_count = self.__strip_equal_signs(encrypted_data)
@@ -83,7 +85,7 @@ class Crypt:
         return encrypted_data, equal_signs_count
 
     def __validate_data(self) -> bool:
-        if not self.key or not self.data:
+        if self.key is None or self.data is None:
             return False
         return len(self.data) > self.IV_LENGTH
 

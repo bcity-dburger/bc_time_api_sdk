@@ -6,5 +6,5 @@ from bc_time.api.enumerators.content_type import ContentType
 class VisitorGroups(ObjectBase, GroupBase):
     def __init__(self, api: Api=None) -> None:
         super().__init__(api)
-        self.content_type_id = ContentType.visitor_group
-        self.membership_content_type_id = ContentType.visitor_group_membership
+        self._content_type_id = ContentType.visitor_group
+        self._membership_content_type_id = ContentType.visitor_group_membership

@@ -12,24 +12,26 @@ from bc_time.api.constants.api import Api as ApiConstants
 from bc_time.api.enumerators.content_type import ContentType
 
 class Api(RequestsBase):
+    # Private
+    __crypt = None
+    __token = None
+
+    # Public
     client_id = None
     client_secret = None
     crypt_key = None
     grant_type = None
     code = None
 
-    __crypt = None
-    __token = None
-
     @property
     def crypt(self) -> Crypt:
-        if not self.__crypt:
+        if self.__crypt is None:
             self.__crypt = Crypt(key=self.crypt_key)
         return self.__crypt
 
     @property
     def token(self):
-        if not self.__token:
+        if self.__token is None:
             self.__token = Token(
                 client_id=self.client_id,
                 client_secret=self.client_secret,
@@ -41,15 +43,15 @@ class Api(RequestsBase):
 
     def __init__(self, client_id: str=None, client_secret: str=None, crypt_key: str=None, grant_type: str=None, code: str=None) -> None:
         self.__init_authentication_credentials_from_file()
-        if client_id:
+        if client_id is not None:
             self.client_id = client_id
-        if client_secret:
+        if client_secret is not None:
             self.client_secret = client_secret
-        if crypt_key:
+        if crypt_key is not None:
             self.crypt_key = crypt_key
-        if grant_type:
+        if grant_type is not None:
             self.grant_type = grant_type
-        if code:
+        if code is not None:
             self.code = code
         self.token.crypt = self.crypt
 
@@ -101,7 +103,7 @@ class Api(RequestsBase):
         return self._get_response_data(post_response.text) if post_response.status_code == requests_status_codes.ok else None
 
     def __get_create_or_update_data(self, content_type_id: ContentType, payload: dict, content_uid: int=None) -> dict:
-        data = {'content_type_id' : int(content_type_id)}
+        data = {'content_type_id': int(content_type_id)}
         if content_uid: # Will be omitted if performing POST (1 new object).
             data['content_uid'] = content_uid
         if payload:
@@ -109,8 +111,8 @@ class Api(RequestsBase):
                 data.update(payload)
             else:
                 data['data'] = payload
-        create_or_update_payload = {'access_token' : self.token.token}
-        if self.crypt_key:
+        create_or_update_payload = {'access_token': self.token.token}
+        if self.crypt_key is not None:
             self.crypt.data = json_dumps(data)
             create_or_update_payload['data'] = self.crypt.encrypt()
         else:
@@ -155,16 +157,16 @@ class Api(RequestsBase):
 
     def __get_request_params(self, content_type_id: ContentType, content_uids: list=None, filters: dict=None, page: int=None, row_count: int=None) -> dict:
         data = {
-            'content_type_id' : int(content_type_id),
-            'content_uid' : content_uids[0] if len(content_uids) == 1 else ','.join([str(content_uid) for content_uid in content_uids]),
+            'content_type_id': int(content_type_id),
+            'content_uid': content_uids[0] if len(content_uids) == 1 else ','.join([str(content_uid) for content_uid in content_uids]),
         }
         if self.__can_paginate(page, row_count):
             data['page'] = page
             data['row_count'] = row_count
-        if filters:
+        if filters is not None:
             data.update(filters)
-        request_params = {'access_token' : self.token.token}
-        if self.crypt_key:
+        request_params = {'access_token': self.token.token}
+        if self.crypt_key is not None:
             self.crypt.data = json_dumps(data)
             request_params['data'] = self.crypt.encrypt()
         else:

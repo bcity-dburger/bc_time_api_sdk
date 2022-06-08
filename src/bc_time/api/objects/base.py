@@ -2,8 +2,11 @@ from abc import ABC
 from bc_time.api.api import Api
 
 class Base(ABC):
+    # Protected
+    _content_type_id = None
+
+    # Public
     api = None
-    content_type_id = None
 
     def __init__(self, api: Api=None) -> None:
-        self.api = Api() if not api else api
+        self.api = Api() if api is None else api

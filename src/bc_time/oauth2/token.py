@@ -7,6 +7,10 @@ from bc_time.system.encryption.crypt import Crypt
 from bc_time.system.constants.datetime.format import Format as DateTimeFormat
 
 class Token(RequestsBase):
+    # Private
+    __crypt = None
+
+    # Public
     grant_type = None
     client_id = None
     client_secret = None
@@ -16,11 +20,9 @@ class Token(RequestsBase):
     token = None
     token_expire_as_str = None # This will be stored in UTC.
 
-    __crypt = None
-
     @property
     def crypt(self) -> Crypt:
-        if not self.__crypt:
+        if self.__crypt is None:
             self.__crypt = Crypt(key=self.crypt_key)
         return self.__crypt
 
@@ -41,7 +43,7 @@ class Token(RequestsBase):
         if not self.__validate_data():
             return False, None
         data = self.__get_data()
-        if not data:
+        if data is None:
             return False, None
         request_response = requests_post(
             url=ApiConstants.OAUTH2_TOKEN_URL,
@@ -58,40 +60,40 @@ class Token(RequestsBase):
         return True, response_data
 
     def __has_valid_token(self) -> bool:
-        if not self.token or not self.token_expire_as_str:
+        if self.token is None or self.token_expire_as_str is None:
             return False
         now = datetime.now(timezone.utc)
         return self.token_expire_as_str > now.strftime(DateTimeFormat.MY_SQL_DATE_TIME)
 
     def __validate_data(self) -> bool:
         if self.grant_type == OAuth2GrantType.AUTH_CODE:
-            return self.client_id and self.client_secret and self.code
+            return self.client_id is not None and self.client_secret is not None and self.code is not None
         elif self.grant_type == OAuth2GrantType.CLIENT_CREDENTIALS:
-            return self.client_id and self.client_secret
+            return self.client_id is not None and self.client_secret is not None
         elif self.grant_type == OAuth2GrantType.JWT_BEARER:
-            return self.client_id and self.private_key_file_path
+            return self.client_id is not None and self.private_key_file_path is not None
         return False
 
     def __get_data(self) -> str:
         if self.grant_type == OAuth2GrantType.AUTH_CODE:
             return {
-                'grant_type' : self.grant_type,
-                'client_id' : self.client_id,
-                'client_secret' : self.__get_client_secret(),
-                'code' : self.code,
+                'grant_type': self.grant_type,
+                'client_id': self.client_id,
+                'client_secret': self.__get_client_secret(),
+                'code': self.code,
             }
         elif self.grant_type == OAuth2GrantType.CLIENT_CREDENTIALS:
             return {
-                'grant_type' : self.grant_type,
-                'client_id' : self.client_id,
-                'client_secret' : self.__get_client_secret(),
+                'grant_type': self.grant_type,
+                'client_id': self.client_id,
+                'client_secret': self.__get_client_secret(),
             }
         elif self.grant_type == OAuth2GrantType.JWT_BEARER:
             return None
         return None
 
     def __get_client_secret(self):
-        if self.crypt_key:
+        if self.crypt_key is not None:
             self.crypt.data = self.client_secret
             return self.crypt.encrypt()
         return self.client_secret

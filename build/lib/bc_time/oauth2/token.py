@@ -75,16 +75,16 @@ class Token(RequestsBase):
     def __get_data(self) -> str:
         if self.grant_type == OAuth2GrantType.AUTH_CODE:
             return {
-                'grant_type' : self.grant_type,
-                'client_id' : self.client_id,
-                'client_secret' : self.__get_client_secret(),
-                'code' : self.code,
+                'grant_type': self.grant_type,
+                'client_id': self.client_id,
+                'client_secret': self.__get_client_secret(),
+                'code': self.code,
             }
         elif self.grant_type == OAuth2GrantType.CLIENT_CREDENTIALS:
             return {
-                'grant_type' : self.grant_type,
-                'client_id' : self.client_id,
-                'client_secret' : self.__get_client_secret(),
+                'grant_type': self.grant_type,
+                'client_id': self.client_id,
+                'client_secret': self.__get_client_secret(),
             }
         elif self.grant_type == OAuth2GrantType.JWT_BEARER:
             return None

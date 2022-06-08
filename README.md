@@ -60,6 +60,25 @@ You also have the option to specify your credentials via the constructor of the 
                         print(visitor)
 ~~~
 
+# Available enumerators
+* RequestStatus
+* GrantType
+* Status
+
+# Available classes
+* Api
+
+# Available objects
+* Branches
+* CompanyProfiles
+* Controllers
+* Devices
+* Employees
+* EmployeeLeave
+* Settings
+* Visitors
+* VisitorGroups
+
 # Available methods
 
 ## For objects

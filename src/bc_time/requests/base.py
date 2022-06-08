@@ -3,7 +3,7 @@ from json import loads as json_loads
 class Base:
     def _get_response_data(self, response_text: str) -> dict:
         response_data = None
-        if self.crypt_key:
+        if self.crypt_key is not None:
             self.crypt.data = response_text
             response_data = self.crypt.decrypt()
         if not response_data:
