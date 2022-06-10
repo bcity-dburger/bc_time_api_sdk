@@ -3,7 +3,10 @@ from bc_time.api.constants.api import Api as ApiConstants
 
 class ObjectBase(Base):
     def create(self, payload: dict) -> dict:
-        return self.api.create( content_type_id=self._content_type_id, payload=payload)
+        return self.api.create(
+            content_type_id=self._content_type_id,
+            payload=payload
+        )
 
     def create_many(self, payloads: dict) -> dict:
         return self.api.create(
@@ -35,7 +38,13 @@ class ObjectBase(Base):
         )
 
     def get_one(self, content_uid: int) -> dict:
-        return self.api.get_one(content_type_id=self._content_type_id, content_uid=content_uid)
+        return self.api.get_one(
+            content_type_id=self._content_type_id,
+            content_uid=content_uid
+        )
 
     def get_many(self, content_uids: list) -> dict:
-        return self.api.get_many(content_type_id=self._content_type_id, content_uids=content_uids)
+        return self.api.get_many(
+            content_type_id=self._content_type_id,
+            content_uids=content_uids
+        )

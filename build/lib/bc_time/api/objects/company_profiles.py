@@ -8,8 +8,9 @@ class CompanyProfiles(Base):
     def __init__(self, api: Api=None) -> None:
         super().__init__(api)
 
-    def confirm_user_email(self, email: str, status: int=Status.active) -> dict:
-        """Email and username - in this context - are synonymous in BC Time.
+    def confirm_email(self, email: str, status: int=Status.active) -> dict:
+        """
+        Email and username - in this context - are synonymous in BC Time.
         """
         filters = {
             'filter_user_name': email,
