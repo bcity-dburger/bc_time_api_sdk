@@ -64,6 +64,7 @@ You also have the option to specify your credentials via the constructor of the 
 * RequestStatus
 * GrantType
 * Status
+* DeviceCommunicationType
 
 # Available classes
 * Api
