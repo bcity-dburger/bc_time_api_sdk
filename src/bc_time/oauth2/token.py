@@ -139,27 +139,3 @@ class Token(RequestsBase):
             algorithm=hashes.SHA1()
         )
         return str(b64encode(signature), 'utf8')
-
-        #     public function deterJwtAssertion( &$value, $algo = OPENSSL_ALGO_SHA1 ) {
-    #     isset( $value ) && $value = null;
-    #     $hd['algo'] = $algo;
-    #     $data = [
-    #         'client_id' => $this->g_client_id,
-    #         'issued' => ( new DateTime( 'now', ( $tz = new DateTimeZone( 'UTC' ) ) ) )->format( 'Y-m-d H:i:s' ), //use UTC
-    #         'expire' => ( new DateTime( 'now', $tz ) )->modify( '+60 seconds' )->format( 'Y-m-d H:i:s' ) //use UTC
-    #     ];
-    #     $values = [$hd, $data];
-    #     foreach ( $values as &$v ) {
-    #         $v = base64_encode( json_encode( $v ) );
-    #     }
-    #     $data_sign = implode( '.', $values );
-    #     $key = file_get_contents( $this->g_key_private_file_path );
-    #     if ( empty( $key ) ) {
-    #         return false;
-    #     } else if ( ! openssl_sign( $data_sign, $signature, $key, $algo ) ) {
-    #         return false;
-    #     }
-    #     $values[] = base64_encode( $signature );
-    #     $value = implode( '.', $values );
-    #     return ( ! empty( $value ) );
-    # }
