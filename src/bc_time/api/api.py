@@ -22,6 +22,7 @@ class Api(RequestsBase):
     crypt_key = None
     grant_type = None
     code = None
+    private_key_file_path = None
 
     @property
     def crypt(self) -> Crypt:
@@ -37,11 +38,12 @@ class Api(RequestsBase):
                 client_secret=self.client_secret,
                 crypt_key=self.crypt_key,
                 grant_type=self.grant_type,
-                code=self.code
+                code=self.code,
+                private_key_file_path=self.private_key_file_path
             )
         return self.__token
 
-    def __init__(self, client_id: str=None, client_secret: str=None, crypt_key: str=None, grant_type: str=None, code: str=None) -> None:
+    def __init__(self, client_id: str=None, client_secret: str=None, crypt_key: str=None, grant_type: str=None, code: str=None, private_key_file_path: str=None) -> None:
         self.__init_authentication_credentials_from_file()
         if client_id is not None:
             self.client_id = client_id
@@ -53,6 +55,8 @@ class Api(RequestsBase):
             self.grant_type = grant_type
         if code is not None:
             self.code = code
+        if private_key_file_path is not None:
+            self.private_key_file_path = private_key_file_path
         self.token.crypt = self.crypt
 
     def __init_authentication_credentials_from_file(self, file_path: str='.bc_time/credentials', section: str='default'):
@@ -63,7 +67,7 @@ class Api(RequestsBase):
         config_parser.read(time_config_file_path)
         if section not in config_parser:
             return
-        config_data_keys_and_attributes = ['client_id', 'client_secret', 'crypt_key', 'grant_type']
+        config_data_keys_and_attributes = ['client_id', 'client_secret', 'crypt_key', 'grant_type', 'private_key_file_path']
         for config_data_key_or_attribute in config_data_keys_and_attributes:
             if config_data_key_or_attribute in config_parser[section]:
                 setattr(

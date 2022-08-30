@@ -31,8 +31,16 @@ $HOME/.bc_time/credentials
 client_id = YOUR_CLIENT_ID
 client_secret = YOUR_CLIENT_SECRET
 crypt_key = YOUR_CRYPT_KEY
-grant_type = YOUR_GRANT_TYPE
+grant_type = YOUR_GRANT_TYPE ; authorisation_code | client_credentials | urn:ietf:params:oauth:grant-type:jwt-bearer
+private_key_file_path = FILE_PATH_TO_YOUR_PRIVATE_KEY
 ~~~
+
+## How to create a private/public key pair
+Using OpenSSL, follow these to steps to generate a private & public key par
+~~~
+ openssl genrsa -out privatekey.pem 1024
+ openssl req -new -x509 -key privatekey.pem -out publickey.cer -days 1825
+ ~~~
 
 Then, from a Python interpreter:
 ~~~
