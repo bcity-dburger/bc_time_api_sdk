@@ -2,8 +2,11 @@ from .api.enumerators.request_status import RequestStatus
 from .oauth2.constants.grant_type import GrantType
 from .api.enumerators.status import Status
 from .api.enumerators.device_communication_type import DeviceCommunicationType
+from .api.enumerators.api_authorisation_type import ApiAuthorisationType
 from .api.api import Api
+from .api.objects.api_authorisations import ApiAuthorisations
 from .api.objects.branches import Branches
+from .api.objects.departments import Departments
 from .api.objects.company_profiles import CompanyProfiles
 from .api.objects.controllers import Controllers
 from .api.objects.devices import Devices
