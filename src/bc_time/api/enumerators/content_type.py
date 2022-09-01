@@ -7,6 +7,7 @@ class ContentType(IntEnum):
     employee = 22
     branch = 35
     employee_leave = 50
+    api_authorisation = 73
     settings = 86
     employee_overtime_rule_detail = 103
     employee_group_membership = 105

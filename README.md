@@ -69,18 +69,21 @@ You also have the option to specify your credentials via the constructor of the 
 ~~~
 
 # Available enumerators
-* RequestStatus
-* GrantType
-* Status
+* ApiAuthorisationType
 * DeviceCommunicationType
+* GrantType
+* RequestStatus
+* Status
 
 # Available classes
 * Api
 
 # Available objects
+* ApiAuthorisations
 * Branches
 * CompanyProfiles
 * Controllers
+* Departments
 * Devices
 * Employees
 * EmployeeLeave
@@ -90,7 +93,7 @@ You also have the option to specify your credentials via the constructor of the 
 
 # Available methods
 
-## For objects
+## For (most) objects
 * create
 * create_many
 * update
