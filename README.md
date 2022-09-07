@@ -85,6 +85,7 @@ You also have the option to specify your credentials via the constructor of the 
 * Controllers
 * Departments
 * Devices
+* DailyOvertimeData
 * Employees
 * EmployeeLeave
 * Settings

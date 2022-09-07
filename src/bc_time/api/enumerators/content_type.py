@@ -24,4 +24,4 @@ class ContentType(IntEnum):
     visitor_group_membership = 116
     visitor_group_area_membership = 117
     current_company_profile = 118
-    daily_attendance_hours = 202
+    daily_overtime_data = 202
