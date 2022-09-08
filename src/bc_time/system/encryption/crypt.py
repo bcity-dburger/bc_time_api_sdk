@@ -85,9 +85,7 @@ class Crypt:
         return encrypted_data, equal_signs_count
 
     def __validate_data(self) -> bool:
-        if self.key is None or self.data is None:
-            return False
-        return len(self.data) > self.IV_LENGTH
+        return self.key is not None and self.data is not None
 
     def __get_iv_and_start_and_end(self) -> tuple[str, str, str]:
         iv = self.__get_random_iv()
