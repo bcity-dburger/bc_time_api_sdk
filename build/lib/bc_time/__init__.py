@@ -15,3 +15,4 @@ from .api.objects.employee_leave import EmployeeLeave
 from .api.objects.settings import Settings
 from .api.objects.visitors import Visitors
 from .api.objects.visitor_groups import VisitorGroups
+from .api.objects.daily_overtime_data import DailyOvertimeData
