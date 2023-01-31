@@ -6,3 +6,9 @@ class ApiAuthorisations(ObjectBaseRead):
     def __init__(self, api: Api=None) -> None:
         super().__init__(api)
         self._content_type_id = ContentType.api_authorisation
+
+    def get_current(self) -> dict:
+        return self.api.get_one(
+            content_type_id=self._content_type_id,
+            content_uid=None # None will result in no content ID being sent to Time's API, which will cause the results of the current API to be returned.
+        )

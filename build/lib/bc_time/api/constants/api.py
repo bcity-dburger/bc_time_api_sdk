@@ -1,7 +1,4 @@
 class Api:
-    # OAUTH2_TOKEN_URL = 'http://time-v2.local/oauth2/token/'
-    # OAUTH2_AUTHORISE_URL = 'http://time-v2.local/oauth2/authorise/'
-    # API_URL = 'http://time-v2.local/api/'
     OAUTH2_TOKEN_URL = 'https://time-v2.bcity.me/oauth2/token/'
     OAUTH2_AUTHORISE_URL = 'https://time-v2.bcity.me/oauth2/authorise/'
     API_URL = 'https://time-v2.bcity.me/api/'

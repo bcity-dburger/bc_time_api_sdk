@@ -1,6 +1,6 @@
 class GrantType:
     AUTH_CODE = 'authorisation_code'
-    IMPLICIT = 'implicit';
+    IMPLICIT = 'implicit'
     USER_CREDENTIAL = 'password'
     CLIENT_CREDENTIALS = 'client_credentials'
     TOKEN_REFRESH = 'refresh_token'
