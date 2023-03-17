@@ -12,3 +12,7 @@ class ApiAuthorisations(ObjectBaseRead):
             content_type_id=self._content_type_id,
             content_uid=None # None will result in no content ID being sent to Time's API, which will cause the results of the current API to be returned.
         )
+
+    def get_current_api_authorisation(self) -> dict:
+        """Deprecated method; will be removed in a future release."""
+        return self.get_current()

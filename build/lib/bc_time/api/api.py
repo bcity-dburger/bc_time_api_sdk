@@ -6,9 +6,8 @@ from configparser import ConfigParser
 from bc_time.system.encryption.crypt import Crypt
 from bc_time.system.validate import Validate
 from bc_time.requests.base import Base as RequestsBase
-from bc_time.oauth2.constants.grant_type import GrantType as OAuth2GrantType
 from bc_time.oauth2.token import Token
-from bc_time.api.constants.api import Api as ApiConstants
+from bc_time.api.constants.api import Api as ApiConstant
 from bc_time.api.enumerators.content_type import ContentType
 
 class Api(RequestsBase):
@@ -23,6 +22,19 @@ class Api(RequestsBase):
     grant_type = None
     code = None
     private_key_file_path = None
+    time_domain = None
+
+    @property
+    def oauth2_token_url(self) -> str:
+        return self.time_domain + ApiConstant.OAUTH2_TOKEN_URL_PATH
+
+    @property
+    def oauth2_authorise_url(self) -> str:
+        return self.time_domain + ApiConstant.OAUTH2_AUTHORISE_URL_PATH
+
+    @property
+    def api_url(self) -> str:
+        return self.time_domain + ApiConstant.API_URL_PATH
 
     @property
     def crypt(self) -> Crypt:
@@ -39,12 +51,13 @@ class Api(RequestsBase):
                 crypt_key=self.crypt_key,
                 grant_type=self.grant_type,
                 code=self.code,
-                private_key_file_path=self.private_key_file_path
+                private_key_file_path=self.private_key_file_path,
+                oauth2_token_url=self.oauth2_token_url
             )
         return self.__token
 
-    def __init__(self, client_id: str=None, client_secret: str=None, crypt_key: str=None, grant_type: str=None, code: str=None, private_key_file_path: str=None) -> None:
-        self.__init_authentication_credentials_from_file()
+    def __init__(self, client_id: str=None, client_secret: str=None, crypt_key: str=None, grant_type: str=None, code: str=None, private_key_file_path: str=None, time_domain: str=None) -> None:
+        self.__init_config_from_file()
         if client_id is not None:
             self.client_id = client_id
         if client_secret is not None:
@@ -57,17 +70,20 @@ class Api(RequestsBase):
             self.code = code
         if private_key_file_path is not None:
             self.private_key_file_path = private_key_file_path
+        if time_domain is not None:
+            self.time_domain = time_domain
+        self.__init_time_domain()
         self.token.crypt = self.crypt
 
-    def __init_authentication_credentials_from_file(self, file_path: str='.bc_time/credentials', section: str='default'):
-        time_config_file_path = f"{str(Path.home())}/{file_path}"
-        if not path_exists(time_config_file_path):
+    def __init_config_from_file(self, file_path: str='.bc_time/config', section: str='default') -> None:
+        time_config_file_path = self.__get_time_config_file_path(file_path=file_path)
+        if time_config_file_path is None:
             return
         config_parser = ConfigParser(inline_comment_prefixes=';')
         config_parser.read(time_config_file_path)
         if section not in config_parser:
             return
-        config_data_keys_and_attributes = ['client_id', 'client_secret', 'crypt_key', 'grant_type', 'private_key_file_path']
+        config_data_keys_and_attributes = ['client_id', 'client_secret', 'crypt_key', 'grant_type', 'private_key_file_path', 'time_domain']
         for config_data_key_or_attribute in config_data_keys_and_attributes:
             if config_data_key_or_attribute in config_parser[section]:
                 setattr(
@@ -75,6 +91,42 @@ class Api(RequestsBase):
                     config_data_key_or_attribute,
                     config_parser[section][config_data_key_or_attribute]
                 )
+
+    def __get_time_config_file_path(self, file_path: str) -> str|None:
+        time_config_file_path = f"{str(Path.home())}/{file_path}"
+        if  path_exists(time_config_file_path):
+            return time_config_file_path
+        # Legacy code - accommodate previous config filename.
+        time_config_file_path = f"{str(Path.home())}/.bc_time/credentials"
+        return time_config_file_path if path_exists(time_config_file_path) else None
+
+    def __init_time_domain(self) -> None:
+        try:
+            if self.time_domain is None:
+                self.time_domain = ApiConstant.TIME_DOMAIN
+            http_secure_type = {
+                'type': self.__get_http_data(secure=True, qualified=True),
+                'length': self.__get_http_data(secure=True, qualified=True, length=True),
+            }
+            http_unsecure_type = {
+                'type': self.__get_http_data(secure=False, qualified=True),
+                'length': self.__get_http_data(secure=False, qualified=True, length=True),
+            }
+            if self.time_domain[0:http_secure_type['length']] != http_secure_type['type'] \
+            and self.time_domain[0:http_unsecure_type['length']] != http_unsecure_type['type']:
+                self.time_domain = http_secure_type['type'] + self.time_domain
+        finally:
+            time_domain_length = len(self.time_domain)
+            if self.time_domain[time_domain_length-1:1] == '/':
+                self.time_domain = self.time_domain[0:time_domain_length-1]
+
+    def __get_http_data(self, secure: bool=False, qualified: bool=True, length: bool=False) -> str|int:
+        http_data = 'http'
+        if secure:
+            http_data += 's'
+        if qualified:
+            http_data += '://'
+        return http_data if not length else len(http_data)
 
     def create(self, content_type_id: ContentType, payload: dict, content_uid: int=None) -> dict:
         request_token_result, request_token_response_data = self.token.request_token()
@@ -86,7 +138,7 @@ class Api(RequestsBase):
             content_uid=content_uid
         )
         post_response = requests_post(
-            url=ApiConstants.API_URL,
+            url=self.api_url,
             data=create_payload
         )
         return self._get_response_data(post_response.text) if post_response.status_code == requests_status_codes.ok else None
@@ -101,7 +153,7 @@ class Api(RequestsBase):
             payload=payload
         )
         post_response = requests_post(
-            url=ApiConstants.API_URL,
+            url=self.api_url,
             data=update_payload
         )
         return self._get_response_data(post_response.text) if post_response.status_code == requests_status_codes.ok else None
@@ -111,7 +163,7 @@ class Api(RequestsBase):
         if content_uid: # Will be omitted if performing POST (1 new object).
             data['content_uid'] = content_uid
         if payload:
-            if content_uid != ApiConstants.UID_POST_MANY:
+            if content_uid != ApiConstant.UID_POST_MANY:
                 data.update(payload)
             else:
                 data['data'] = payload
@@ -123,7 +175,7 @@ class Api(RequestsBase):
             create_or_update_payload.update(data)
         return create_or_update_payload
 
-    def get_all_using_pagination(self, content_type_id: ContentType, content_uid: int=ApiConstants.UID_GET_ALL, filters: dict=None, page: int=1, row_count: int=ApiConstants.DEFAULT_ROW_COUNT) -> dict:
+    def get_all_using_pagination(self, content_type_id: ContentType, content_uid: int=ApiConstant.UID_GET_ALL, filters: dict=None, page: int=1, row_count: int=ApiConstant.DEFAULT_ROW_COUNT) -> dict:
         if not self.token.request_token():
             return None
         request_params = self.__get_request_params(
@@ -134,7 +186,7 @@ class Api(RequestsBase):
             row_count=row_count
         )
         request_response = requests_get(
-            url=ApiConstants.API_URL,
+            url=self.api_url,
             params=request_params
         )
         return self._get_response_data(request_response.text) if request_response.status_code == requests_status_codes.ok else None
@@ -144,7 +196,7 @@ class Api(RequestsBase):
             return None
         request_params = self.__get_request_params(content_type_id, content_uids=[content_uid])
         request_response = requests_get(
-            url=ApiConstants.API_URL,
+            url=self.api_url,
             params=request_params
         )
         return self._get_response_data(request_response.text) if request_response.status_code == requests_status_codes.ok else None
@@ -154,7 +206,7 @@ class Api(RequestsBase):
             return None
         request_params = self.__get_request_params(content_type_id, content_uids)
         request_response = requests_get(
-            url=ApiConstants.API_URL,
+            url=self.api_url,
             params=request_params
         )
         return self._get_response_data(request_response.text) if request_response.status_code == requests_status_codes.ok else None
@@ -180,4 +232,4 @@ class Api(RequestsBase):
     def __can_paginate(self, page: int, row_count: int) -> bool:
         if not Validate.is_numeric(page, min=1):
             return False
-        return Validate.is_numeric(row_count, min=1, max=ApiConstants.DEFAULT_ROW_COUNT)
+        return Validate.is_numeric(row_count, min=1, max=ApiConstant.DEFAULT_ROW_COUNT)
