@@ -24,3 +24,4 @@ class RequestStatus(IntEnum):
     token_invalid = 19
     token_expired = 20
     authentication_credentials_invalid = 21 # Raised by Time Comm. Service.
+    maintenance_in_progress = 22

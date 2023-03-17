@@ -14,6 +14,7 @@ from bc_time.system.constants.datetime.format import Format as DateTimeFormat
 class Token(RequestsBase):
     # Private
     __crypt = None
+    __oauth2_token_url: str = None
 
     # Public
     client_id = None
@@ -35,13 +36,14 @@ class Token(RequestsBase):
     def crypt(self, value: Crypt):
         self.__crypt = value
 
-    def __init__(self, client_id: str=None, client_secret: str=None, crypt_key: str=None, grant_type: str=None, code: str=None, private_key_file_path: str=None) -> None:
+    def __init__(self, client_id: str=None, client_secret: str=None, crypt_key: str=None, grant_type: str=None, code: str=None, private_key_file_path: str=None, oauth2_token_url: str=None) -> None:
         self.client_id = client_id
         self.client_secret = client_secret
         self.crypt_key = crypt_key
         self.grant_type = grant_type
         self.code = code
         self.private_key_file_path = private_key_file_path
+        self.__oauth2_token_url = oauth2_token_url
 
     def request_token(self) -> tuple[bool, dict]:
         if self.__has_valid_token():
@@ -52,7 +54,7 @@ class Token(RequestsBase):
         if data is None:
             return False, None
         request_response = requests_post(
-            url=ApiConstants.OAUTH2_TOKEN_URL,
+            url=self.__oauth2_token_url,
             data=data
         )
         if request_response.status_code != requests_status_codes.ok:
@@ -72,6 +74,8 @@ class Token(RequestsBase):
         return self.token_expire_as_str > now.strftime(DateTimeFormat.MY_SQL_DATE_TIME)
 
     def __validate_data(self) -> bool:
+        if self.__oauth2_token_url is None:
+            return False
         if self.grant_type == OAuth2GrantType.AUTH_CODE:
             return self.client_id is not None and self.client_secret is not None and self.code is not None
         elif self.grant_type == OAuth2GrantType.CLIENT_CREDENTIALS:

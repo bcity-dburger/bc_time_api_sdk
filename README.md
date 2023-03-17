@@ -24,7 +24,7 @@ $ python pip install -e .
 
 # Using bc_time
 After you've installed bc_time, the next step is to set-up your credentials at:\
-$HOME/.bc_time/credentials
+$HOME/.bc_time/config
 
 ~~~
 [default]
@@ -33,6 +33,7 @@ client_secret = YOUR_CLIENT_SECRET
 crypt_key = YOUR_CRYPT_KEY
 grant_type = YOUR_GRANT_TYPE ; authorisation_code | client_credentials | urn:ietf:params:oauth:grant-type:jwt-bearer
 private_key_file_path = FILE_PATH_TO_YOUR_PRIVATE_KEY
+time_domain = BETA_OR_OTHER_NON_PRODUCTION_TIME_DOMAIN ; Optional.
 ~~~
 
 ## How to create a private/public key pair
