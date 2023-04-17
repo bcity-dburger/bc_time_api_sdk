@@ -69,7 +69,7 @@ You also have the option to specify your credentials via the constructor of the 
                         print(visitor)
 ~~~
 
-Using grant type, password (constant, bc_time.GrantType.CLIENT_CREDENTIALS):
+Using grant type, password (constant, bc_time.GrantType.USER_CREDENTIALS):
 ~~~
 >>> import bc_time
 >>> api = bc_time.Api(
