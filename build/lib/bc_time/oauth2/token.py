@@ -23,6 +23,8 @@ class Token(RequestsBase):
     grant_type = None
     code = None
     private_key_file_path = None
+    username = None
+    password = None
     token = None
     token_expire_as_str = None # This will be stored in UTC.
 
@@ -46,26 +48,33 @@ class Token(RequestsBase):
         self.__oauth2_token_url = oauth2_token_url
 
     def request_token(self) -> tuple[bool, dict]:
-        if self.__has_valid_token():
-            return True, None
-        if not self.__validate_data():
-            return False, None
-        data = self.__get_data()
-        if data is None:
-            return False, None
-        request_response = requests_post(
-            url=self.__oauth2_token_url,
-            data=data
-        )
-        if request_response.status_code != requests_status_codes.ok:
-            return False, None
-        response_data = self._get_response_data(request_response.text)
-        if not set(('access_token', 'expires_in')).issubset(response_data.keys()):
-            return False, response_data
-        self.token = response_data['access_token']
-        token_expire = datetime.now(timezone.utc) + timedelta(seconds=response_data['expires_in'])
-        self.token_expire_as_str = token_expire.strftime(DateTimeFormat.MY_SQL_DATE_TIME)
-        return True, response_data
+        try:
+            if self.__has_valid_token():
+                return True, None
+            if not self.__validate_data():
+                return False, None
+            data = self.__get_data()
+            if data is None:
+                return False, None
+            request_response = requests_post(
+                url=self.__oauth2_token_url,
+                data=data
+            )
+            if request_response.status_code != requests_status_codes.ok:
+                return False, None
+            response_data = self._get_response_data(request_response.text)
+            if not set(('access_token', 'expires_in')).issubset(response_data.keys()):
+                return False, response_data
+            self.token = response_data['access_token']
+            token_expire = datetime.now(timezone.utc) + timedelta(seconds=response_data['expires_in'])
+            self.token_expire_as_str = token_expire.strftime(DateTimeFormat.MY_SQL_DATE_TIME)
+            return True, response_data
+        finally:
+            # Clear up sensitive user credentials.
+            if self.username is not None:
+                self.username = None
+            if self.password is not None:
+                self.password = None
 
     def __has_valid_token(self) -> bool:
         if self.token is None or self.token_expire_as_str is None:
@@ -76,13 +85,20 @@ class Token(RequestsBase):
     def __validate_data(self) -> bool:
         if self.__oauth2_token_url is None:
             return False
+        data = ()
         if self.grant_type == OAuth2GrantType.AUTH_CODE:
-            return self.client_id is not None and self.client_secret is not None and self.code is not None
+            data = (self.client_id, self.client_secret, self.code)
         elif self.grant_type == OAuth2GrantType.CLIENT_CREDENTIALS:
-            return self.client_id is not None and self.client_secret is not None
+            data = (self.client_id, self.client_secret)
         elif self.grant_type == OAuth2GrantType.JWT_BEARER:
-            return self.client_id is not None and self.private_key_file_path is not None
-        return False
+            data = (self.client_id, self.private_key_file_path)
+        elif self.grant_type == OAuth2GrantType.USER_CREDENTIALS:
+            data = (self.client_id, self.client_secret, self.username, self.password)
+        # We don't expect this to ever be true, but if it is, let's rather be sceptical.
+        if not data:
+            return False
+        none_values = [value for value in data if value is None] # Grab all values that are None.
+        return len(none_values) == 0 # We want no data to be None.
 
     def __get_data(self) -> dict:
         if self.grant_type == OAuth2GrantType.AUTH_CODE:
@@ -102,6 +118,14 @@ class Token(RequestsBase):
             return {
                 'grant_type': self.grant_type,
                 'assertion': self.__get_jwt_assertion(),
+            }
+        elif self.grant_type == OAuth2GrantType.USER_CREDENTIALS:
+            return {
+                'grant_type': self.grant_type,
+                'client_id': self.client_id,
+                'client_secret': self.__get_client_secret(),
+                'username': self.username,
+                'password': self.__get_password(),
             }
 
     def __get_client_secret(self) -> str:
@@ -143,3 +167,9 @@ class Token(RequestsBase):
             algorithm=hashes.SHA1()
         )
         return str(b64encode(signature), 'utf8')
+
+    def __get_password(self) -> str:
+        if self.crypt_key is not None:
+            self.crypt.data = self.password
+            return self.crypt.encrypt()
+        return self.password

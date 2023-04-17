@@ -69,6 +69,24 @@ You also have the option to specify your credentials via the constructor of the 
                         print(visitor)
 ~~~
 
+Using grant type, password (constant, bc_time.GrantType.CLIENT_CREDENTIALS):
+~~~
+>>> import bc_time
+>>> api = bc_time.Api(
+                client_secret = 'YOUR_CLIENT_SECRET', # If the client secret is specified in ~/.bc_time/config then this parameter can be safely omitted.
+                grant_type=bc_time.GrantType.USER_CREDENTIALS # Override grant type as specified in ~/.bc_time/config; consider using the bc_time.GrantType constant.
+        )
+>>> api.token.username = 'THE_USERNAME'
+>>> api.token.password = 'THE_PASSWORD'
+>>> token_acquired, _ = api.token.request_token()
+>>> if token_acquired:
+                employees = bc_time.Employees(api)
+                response_data = employees.get_all_using_pagination()
+                if response_data['status'] == bc_time.RequestStatus.success:
+                        for employee in response_data['data']:
+                                print(employee)
+~~~
+
 # Available enumerators
 * ApiAuthorisationType
 * DeviceCommunicationType
