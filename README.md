@@ -107,6 +107,7 @@ Using grant type, password (constant, bc_time.GrantType.USER_CREDENTIALS):
 * DailyOvertimeData
 * Employees
 * EmployeeLeave
+* PeriodOvertimeData
 * Settings
 * Visitors
 * VisitorGroups
