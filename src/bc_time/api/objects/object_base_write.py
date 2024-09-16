@@ -1,7 +1,8 @@
-from bc_time.api.objects.base import Base
+from bc_time.api.objects.object_base_create import ObjectBaseCreate
+from bc_time.api.objects.object_base_update import ObjectBaseUpdate
 from bc_time.api.constants.api import Api as ApiConstants
 
-class ObjectBaseWrite(Base):
+class ObjectBaseWrite(ObjectBaseUpdate, ObjectBaseUpdate):
     def create(self, payload: dict) -> dict:
         return self.api.create(
             content_type_id=self._content_type_id,

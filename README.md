@@ -16,7 +16,7 @@ Then, you can install bc_time from PyPI with:
 $ python pip install bc_time
 or install from source with:
 ~~~
-$ git clone git@bitbucket.org:dburger/bc_time_api_sdk.git
+$ git clone git@github.com:Binary-City/bc_time_api_sdk.git
 $ cd bc_time_api_sdk
 $ python pip install -r requirements.txt
 $ python pip install -e .
@@ -108,6 +108,7 @@ Using grant type, password (constant, bc_time.GrantType.USER_CREDENTIALS):
 * Employees
 * EmployeeLeave
 * PeriodOvertimeData
+* RawAttendance
 * Settings
 * Visitors
 * VisitorGroups
