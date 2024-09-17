@@ -13,6 +13,7 @@ from .api.objects.devices import Devices
 from .api.objects.employees import Employees
 from .api.objects.employee_leave import EmployeeLeave
 from .api.objects.settings import Settings
+from .api.objects.raw_attendance import RawAttendance
 from .api.objects.visitors import Visitors
 from .api.objects.visitor_groups import VisitorGroups
 from .api.objects.daily_overtime_data import DailyOvertimeData
