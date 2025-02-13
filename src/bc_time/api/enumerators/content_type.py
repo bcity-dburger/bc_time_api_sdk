@@ -17,6 +17,7 @@ class ContentType(IntEnum):
     security_details = 250
     security_area_duration = 252 # How much time spent in area(s).
     visitor_security_details = 350
+    visitor_security_area_occupant = 351
     visitor_security_area_duration = 352 # How much time spent in area(s).
     controller = 111
     company_profile_user_membership = 114
